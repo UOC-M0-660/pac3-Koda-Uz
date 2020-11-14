@@ -56,6 +56,8 @@ dependencies {
     // Lifecycle: Handles App Components Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+    //OK2Curl
+    implementation 'com.github.mrmike:ok2curl:0.6.0'
 
 
     // Glide: Image Loading
