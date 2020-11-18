@@ -10,8 +10,10 @@ import edu.uoc.pac3.R
 class SessionManager(private val context: Context) {
 
     fun isUserAvailable(): Boolean {
-        // TODO: Implement
-        return false
+        val fileKey = context.getString(R.string.preference_file_key)
+        val accessTokenKey = context.getString(R.string.access_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return false
+        return sharedPref.getString(accessTokenKey, null) != null
     }
 
     fun getAccessToken(): String? {

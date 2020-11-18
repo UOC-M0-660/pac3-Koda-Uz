@@ -1,5 +1,6 @@
 package edu.uoc.pac3.oauth
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
+import edu.uoc.pac3.twitch.streams.StreamsActivity
 import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,7 +91,9 @@ class OAuthActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
 
         // Create Twitch Service
-        val twitchService = TwitchApiService(Network.createHttpClient())
+        val twitchService = TwitchApiService(Network.createHttpClient(this))
+
+        val intent = Intent(this, StreamsActivity::class.java)
 
         // Get Tokens from Twitch
         lifecycleScope.launch {
@@ -102,6 +106,9 @@ class OAuthActivity : AppCompatActivity() {
                 withContext(Dispatchers.IO) { sessionManager.saveAccessToken(it.accessToken) }
                 withContext(Dispatchers.IO) { it.refreshToken?.let { it1 -> sessionManager.saveRefreshToken(it1) } }
             }
+
+            // Start Activity
+            startActivity(intent)
         }
     }
 }

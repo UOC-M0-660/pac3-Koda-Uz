@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Loggable
+import edu.uoc.pac3.data.SessionManager
+import edu.uoc.pac3.data.oauth.OAuthConstants
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
@@ -21,7 +23,7 @@ object Network {
 
     private const val TAG = "Network"
 
-    fun createHttpClient(): HttpClient {
+    fun createHttpClient(context: Context): HttpClient {
         return HttpClient(OkHttp) {
             // Json
             install(JsonFeature) {
@@ -44,7 +46,8 @@ object Network {
             }
             // Apply to All Requests
             defaultRequest {
-                parameter("api_key", "some_api_key")
+                header("client-id", OAuthConstants.clientId)
+                header("authorization", "Bearer " + SessionManager(context).getAccessToken())
                 // Content Type
                 if (this.method != HttpMethod.Get) contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
