@@ -19,11 +19,15 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
     /// Gets Access and Refresh Tokens on Twitch
     suspend fun getTokens(authorizationCode: String): OAuthTokensResponse? {
-        return httpClient.post<OAuthTokensResponse>(Endpoints.oauthTokenUrl) {
-            parameter("client_secret", OAuthConstants.clientSecret)
-            parameter("code", authorizationCode)
-            parameter("grant_type", "authorization_code")
-            parameter("redirect_uri", OAuthConstants.redirectUri)
+        return try {
+            httpClient.post<OAuthTokensResponse>(Endpoints.oauthTokenUrl) {
+                parameter("client_secret", OAuthConstants.clientSecret)
+                parameter("code", authorizationCode)
+                parameter("grant_type", "authorization_code")
+                parameter("redirect_uri", OAuthConstants.redirectUri)
+            }
+        } catch (exception: Exception) {
+            null
         }
     }
 
