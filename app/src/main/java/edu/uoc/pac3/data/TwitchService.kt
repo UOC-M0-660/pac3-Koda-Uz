@@ -32,6 +32,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
         }
     }
 
+    // Refresh Access and Refresh tokens
     suspend fun refreshTokens(refreshToken: String):OAuthTokensResponse? {
         return httpClient.post<OAuthTokensResponse>(Endpoints.oauthTokenUrl) {
             parameter("client_secret", OAuthConstants.clientSecret)
@@ -46,6 +47,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
         // Get Streams from Twitch
         return try {
             if (cursor != null) {
+                // Uses cursor for pagination
                 httpClient.get<StreamsResponse>(Endpoints.twitchStreamsUrl) {
                     parameter("first", 20)
                     parameter("after", cursor)

@@ -11,6 +11,7 @@ import edu.uoc.pac3.R
 import edu.uoc.pac3.data.SessionManager
 import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Network
+import edu.uoc.pac3.data.oauth.UnauthorizedException
 import edu.uoc.pac3.data.user.UserResponse
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ class ProfileActivity : AppCompatActivity() {
     private val TAG = "ProfileActivity"
 
     private lateinit var twitchService: TwitchApiService
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +32,41 @@ class ProfileActivity : AppCompatActivity() {
         // Create Twitch Service
         twitchService = TwitchApiService(Network.createHttpClient(this))
 
+        // Create SessionManager
+        sessionManager = SessionManager(this)
+
         // Get User Data
-        lifecycleScope.launch {
-            val userResponse = withContext(Dispatchers.IO) { twitchService.getUser() }
-            setupProfileUI(userResponse)
+        try {
+            lifecycleScope.launch {
+                val userResponse = withContext(Dispatchers.IO) { twitchService.getUser() }
+                setupProfileUI(userResponse)
+            }
+        } catch (exception: UnauthorizedException) {
+            // Token Expired
+            lifecycleScope.launch {
+                try {
+                    //Refresh Token
+                    refreshAccessToken()
+                    //  Get User data again
+                    val userResponse = withContext(Dispatchers.IO) { twitchService.getUser() }
+                    setupProfileUI(userResponse)
+                } catch (exception: UnauthorizedException) {
+                // Tokens are invalid
+                // Delete current tokens
+                withContext(Dispatchers.IO) {
+                    sessionManager.clearAccessToken()
+                    sessionManager.clearRefreshToken()
+                }
+                // Return to LaunchActivity
+                startActivity(Intent(
+                        this@ProfileActivity,
+                        LaunchActivity::class.java
+                ))
+            }
+
+            }
         }
+
 
         updateDescriptionButton.setOnClickListener {
             updateUserDescription()
@@ -70,13 +102,29 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        val sessionManager = SessionManager(this)
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 sessionManager.clearAccessToken()
                 sessionManager.clearRefreshToken()
             }
             startActivity(Intent(this@ProfileActivity, LaunchActivity::class.java))
+        }
+    }
+
+    // Refreshes Access tokens
+    private suspend fun refreshAccessToken() {
+        withContext(Dispatchers.IO) {
+            // Get Refresh token
+            val refreshToken = sessionManager.getRefreshToken()
+            refreshToken?.let { token ->
+                // Get new tokens
+                val response = twitchService.refreshTokens(token)
+                response?.let {
+                    // Save new tokens
+                    sessionManager.saveAccessToken(it.accessToken)
+                    sessionManager.saveRefreshToken(it.refreshToken ?: "")
+                }
+            }
         }
     }
 
