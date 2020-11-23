@@ -62,9 +62,12 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
     /// Gets Current Authorized User on Twitch
     @Throws(UnauthorizedException::class)
-    suspend fun getUser(): UserResponse? {
-        return try {
-            httpClient.get<UserResponse>(Endpoints.twitchUserUrl)
+    suspend fun getUser(): User? {
+        try {
+            // HTTP Query return list of user
+            val userResponse = httpClient.get<UserResponse>(Endpoints.twitchUserUrl)
+            // Logged user will be the first one
+            return userResponse.data?.get(0)
         } catch (exception: Exception) {
             throw UnauthorizedException
         }
@@ -72,11 +75,14 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
     /// Gets Current Authorized User on Twitch
     @Throws(UnauthorizedException::class)
-    suspend fun updateUserDescription(description: String): UserResponse? {
-        return try {
-            httpClient.put<UserResponse>(Endpoints.twitchUserUrl) {
+    suspend fun updateUserDescription(description: String): User? {
+        try {
+            // HTTP Query return list of user
+            val userResponse = httpClient.put<UserResponse>(Endpoints.twitchUserUrl) {
                 parameter("description", description)
             }
+            // Logged user will be the first one
+            return userResponse.data?.get(0)
         } catch (exception: Exception) {
             throw UnauthorizedException
         }

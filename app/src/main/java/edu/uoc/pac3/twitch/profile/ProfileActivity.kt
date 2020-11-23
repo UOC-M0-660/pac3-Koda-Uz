@@ -12,6 +12,7 @@ import edu.uoc.pac3.data.SessionManager
 import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.UnauthorizedException
+import edu.uoc.pac3.data.user.User
 import edu.uoc.pac3.data.user.UserResponse
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +39,8 @@ class ProfileActivity : AppCompatActivity() {
         // Get User Data
         try {
             lifecycleScope.launch {
-                val userResponse = withContext(Dispatchers.IO) { twitchService.getUser() }
-                setupProfileUI(userResponse)
+                val user = withContext(Dispatchers.IO) { twitchService.getUser() }
+                setupProfileUI(user)
             }
         } catch (exception: UnauthorizedException) {
             // Token Expired
@@ -48,8 +49,8 @@ class ProfileActivity : AppCompatActivity() {
                     //Refresh Token
                     refreshAccessToken()
                     //  Get User data again
-                    val userResponse = withContext(Dispatchers.IO) { twitchService.getUser() }
-                    setupProfileUI(userResponse)
+                    val user = withContext(Dispatchers.IO) { twitchService.getUser() }
+                    setupProfileUI(user)
                 } catch (exception: UnauthorizedException) {
                 // Tokens are invalid
                 // Delete current tokens
@@ -82,16 +83,16 @@ class ProfileActivity : AppCompatActivity() {
             val description = text_input_layout.editText?.text.toString()
             Log.d(TAG, description)
 
-            val userResponse = withContext(Dispatchers.IO) {
+            val user = withContext(Dispatchers.IO) {
                 twitchService.updateUserDescription(description)
             }
 
-            setupProfileUI(userResponse)
+            setupProfileUI(user)
         }
     }
 
-    private fun setupProfileUI(userResponse: UserResponse?) {
-        userResponse?.data?.get(0)?.let{
+    private fun setupProfileUI(user: User?) {
+        user?.let{
             userNameTextView.text = it.userName
             viewsText.text = it.viewCount.toString()
             userDescriptionEditText.setText(it.description)
