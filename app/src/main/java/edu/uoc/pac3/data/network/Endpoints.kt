@@ -8,8 +8,12 @@ object Endpoints {
     // OAuth2 API Endpoints
     private const val oauthBaseUrl = "https://id.twitch.tv/oauth2"
     // TODO: Add all remaining endpoints
+    const val oauthAuthorizationUrl = "https://id.twitch.tv/oauth2/authorize"
+    const val oauthTokenUrl = "https://id.twitch.tv/oauth2/token"
 
     // Twitch API Endpoints
     private const val twitchBaseUrl = "https://api.twitch.tv/helix"
     // TODO: Add all remaining endpoints
+    const val twitchStreamsUrl = "https://api.twitch.tv/helix/streams"
+    const val twitchUserUrl = "https://api.twitch.tv/helix/users"
 }

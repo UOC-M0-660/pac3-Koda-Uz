@@ -1,41 +1,73 @@
 package edu.uoc.pac3.data
 
 import android.content.Context
+import edu.uoc.pac3.R
 
 /**
  * Created by alex on 06/09/2020.
  */
 
-class SessionManager(context: Context) {
+class SessionManager(private val context: Context) {
 
     fun isUserAvailable(): Boolean {
-        // TODO: Implement
-        return false
+        val fileKey = context.getString(R.string.preference_file_key)
+        val accessTokenKey = context.getString(R.string.access_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return false
+        return sharedPref.getString(accessTokenKey, null) != null
     }
 
     fun getAccessToken(): String? {
-        // TODO: Implement
-        return null
+        val fileKey = context.getString(R.string.preference_file_key)
+        val accessTokenKey = context.getString(R.string.access_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return null
+        return sharedPref.getString(accessTokenKey, null)
     }
 
     fun saveAccessToken(accessToken: String) {
-        TODO("Save Access Token")
+        val fileKey = context.getString(R.string.preference_file_key)
+        val accessTokenKey = context.getString(R.string.access_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString(accessTokenKey, accessToken)
+            commit()
+        }
     }
 
     fun clearAccessToken() {
-        TODO("Clear Access Token")
+        val fileKey = context.getString(R.string.preference_file_key)
+        val accessTokenKey = context.getString(R.string.access_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            remove(accessTokenKey)
+            commit()
+        }
     }
 
     fun getRefreshToken(): String? {
-        TODO("Get Refresh Token")
+        val fileKey = context.getString(R.string.preference_file_key)
+        val refreshTokenKey = context.getString(R.string.refresh_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return null
+        return sharedPref.getString(refreshTokenKey, null)
     }
 
     fun saveRefreshToken(refreshToken: String) {
-        TODO("Save Refresh Token")
+        val fileKey = context.getString(R.string.preference_file_key)
+        val refreshTokenKey = context.getString(R.string.refresh_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putString(refreshTokenKey, refreshToken)
+            commit()
+        }
     }
 
     fun clearRefreshToken() {
-        TODO("Clear Refresh Token")
+        val fileKey = context.getString(R.string.preference_file_key)
+        val refreshTokenKey = context.getString(R.string.refresh_token_key)
+        val sharedPref = context.getSharedPreferences(fileKey, Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            remove(refreshTokenKey)
+            commit()
+        }
     }
 
 }
