@@ -15,7 +15,7 @@
         tools:context=".twitch.profile.ProfileActivity">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/user_profile_image"
             android:layout_width="@dimen/profile_image_size"
             android:layout_height="@dimen/profile_image_size"
             tools:src="@mipmap/ic_launcher" />
@@ -51,6 +51,7 @@
             tools:text="Ibai" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_medium"

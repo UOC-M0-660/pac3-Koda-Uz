@@ -26,4 +26,5 @@
     <string name="preference_file_key">edu.uoc.pac3.PREFERENCE_FILE_KEY</string>
     <string name="access_token_key">edu.uoc.pac3.ACCESS_TOKEN_KEY</string>
     <string name="refresh_token_key">edu.uoc.pac3.REFRESH_TOKEN_KEY</string>
+    <string name="show_user_profile">Ver perfil de usuario</string>
 </resources>
